@@ -8,11 +8,14 @@ import model
 def main():
     # Load data
     num_nodes_list = [10, 20, 30]
+    num_time_periods = 5
+    time_window_size = 2
+    seed = 1235
     dataset = []
 
     for num_nodes in num_nodes_list:
-        positions, speeds, travel_times = data.generate_data(num_nodes)
-        graph_data = data.create_data(positions, travel_times)
+        positions, time_periods, densities, speeds, travel_times = data.generate_data(num_nodes, num_time_periods, seed)
+        graph_data = data.create_data(positions, time_periods, travel_times, time_window_size) # Add time_window_size as an argument
         dataset.append(graph_data)
 
     # Split dataset into train and test
@@ -35,9 +38,10 @@ def main():
     hparams = {
         "lr": 1e-3,
         "clip_epsilon": 0.2,
-        "input_size": 2,
+        "input_size": 2 + 1 + 64,  # Including time windows
         "hidden_size": 64,
         "output_size": 1,
+        "num_time_periods": 5,
     }
 
     # Create and train the model
